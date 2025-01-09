@@ -30,9 +30,19 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // Gestão do perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Rotas para as categorias e produtos
+    Route::get('/categories', function () {
+        return Inertia::render('Categories');
+    })->name('categories');
+
+    Route::get('/products', function () {
+        return Inertia::render('Products');
+    })->name('products');
 });
 
 require __DIR__.'/auth.php';
