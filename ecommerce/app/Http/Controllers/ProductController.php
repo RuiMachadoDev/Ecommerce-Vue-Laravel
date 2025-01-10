@@ -4,12 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        return Product::with('category')->get();
+        $products = Product::paginate(10); // Paginação para admin
+        return Inertia::render('Admin/Products', [
+            'products' => $products,
+        ]);
+    }
+
+    public function showPublicProducts()
+    {
+        $products = Product::where('is_active', true)->paginate(12); // Apenas produtos ativos
+        return Inertia::render('Shop', [
+            'products' => $products,
+        ]);
     }
 
     public function store(Request $request)

@@ -51,4 +51,7 @@ Route::middleware('auth')->group(function () {
     })->name('products');
 });
 
+// Página de visualização de produtos para utilizadores comuns
+Route::get('/shop', [\App\Http\Controllers\ProductController::class, 'showPublicProducts'])->name('shop');
+
 require __DIR__.'/auth.php';
