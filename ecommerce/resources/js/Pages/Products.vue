@@ -1,28 +1,88 @@
 <template>
-  <div>
-    <h1>Gestão de Produtos</h1>
-    <button @click="showCreateForm">Adicionar Novo Produto</button>
+  <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-8 text-gray-800">
+    <h1 class="text-2xl font-bold mb-6 text-center">Gestão de Produtos</h1>
 
-    <ul>
-      <li v-for="product in products" :key="product.id">
-        {{ product.name }} - {{ product.price }}€
-        <button @click="editProduct(product)">Editar</button>
-        <button @click="deleteProduct(product.id)">Excluir</button>
+    <button
+      @click="showCreateForm"
+      class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition mb-4"
+    >
+      Adicionar Novo Produto
+    </button>
+
+    <ul class="space-y-4">
+      <li
+        v-for="product in products"
+        :key="product.id"
+        class="flex justify-between items-center bg-gray-100 p-4 rounded-lg shadow-sm"
+      >
+        <div>
+          <h3 class="text-lg font-medium">{{ product.name }}</h3>
+          <p class="text-gray-600">Preço: R$ {{ product.price }}</p>
+          <p class="text-gray-600">Estoque: {{ product.stock }}</p>
+        </div>
+        <div class="space-x-2">
+          <button
+            @click="editProduct(product)"
+            class="bg-gray-800 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition"
+          >
+            Editar
+          </button>
+          <button
+            @click="deleteProduct(product.id)"
+            class="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-500 transition"
+          >
+            Excluir
+          </button>
+        </div>
       </li>
     </ul>
 
     <!-- Formulário para criar/editar produtos -->
-    <div v-if="formVisible">
-      <input v-model="formData.name" placeholder="Nome do Produto" />
-      <textarea v-model="formData.description" placeholder="Descrição"></textarea>
-      <input type="number" v-model="formData.price" placeholder="Preço" />
-      <input type="number" v-model="formData.stock" placeholder="Stock" />
-      <select v-model="formData.category_id">
-        <option v-for="category in categories" :key="category.id" :value="category.id">
-          {{ category.name }}
-        </option>
-      </select>
-      <button @click="saveProduct">Salvar</button>
+    <div v-if="formVisible" class="mt-6 bg-gray-50 p-4 rounded-lg shadow">
+      <h2 class="text-xl font-semibold mb-4">
+        {{ formData.id ? 'Editar Produto' : 'Adicionar Produto' }}
+      </h2>
+      <div class="mb-4">
+        <input
+          v-model="formData.name"
+          type="text"
+          placeholder="Nome do Produto"
+          class="w-full p-2 bg-gray-100 border border-gray-300 rounded-md focus:ring focus:ring-gray-500"
+        />
+      </div>
+      <div class="mb-4">
+        <input
+          v-model="formData.price"
+          type="number"
+          placeholder="Preço"
+          class="w-full p-2 bg-gray-100 border border-gray-300 rounded-md focus:ring focus:ring-gray-500"
+        />
+      </div>
+      <div class="mb-4">
+        <input
+          v-model="formData.stock"
+          type="number"
+          placeholder="Estoque"
+          class="w-full p-2 bg-gray-100 border border-gray-300 rounded-md focus:ring focus:ring-gray-500"
+        />
+      </div>
+      <div class="mb-4">
+        <select
+          v-model="formData.category_id"
+          class="w-full p-2 bg-gray-100 border border-gray-300 rounded-md focus:ring focus:ring-gray-500"
+        >
+          <option value="" disabled>Selecione uma Categoria</option>
+          <option v-for="category in categories" :key="category.id" :value="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+      </div>
+      <button
+        @click="saveProduct"
+        class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition"
+      >
+        Salvar
+      </button>
     </div>
   </div>
 </template>
