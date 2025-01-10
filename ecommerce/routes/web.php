@@ -29,6 +29,11 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::post('/logout', function () {
+    auth()->logout();
+    return redirect('/');
+})->name('logout');
+
 Route::middleware('auth')->group(function () {
     // Gestão do perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
