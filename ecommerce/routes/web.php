@@ -22,6 +22,7 @@ Route::get('/', function () {
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'csrf_token' => csrf_token(),
     ]);
 });
 
@@ -31,7 +32,7 @@ Route::get('/dashboard', function () {
 
 Route::post('/logout', function () {
     auth()->logout();
-    return redirect('/');
+    return redirect('/login');
 })->name('logout');
 
 Route::middleware('auth')->group(function () {

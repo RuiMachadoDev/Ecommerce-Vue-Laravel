@@ -8,15 +8,12 @@
       <div>
         <div v-if="auth.user" class="flex items-center space-x-4">
           <p class="text-gray-600">Olá, {{ auth.user.name }}</p>
-          <form method="POST" action="/logout">
-            <input type="hidden" name="_token" :value="csrfToken" />
-            <button
-              type="submit"
-              class="bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700"
-            >
-              Logout
-            </button>
-          </form>
+          <button
+            @click="logout"
+            class="bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700"
+          >
+            Logout
+          </button>
         </div>
         <div v-else>
           <a
@@ -38,23 +35,25 @@
     </nav>
 
     <!-- Content -->
-    <div class="text-center">
-      <h2 class="text-3xl font-bold text-gray-800 pt-20">Bem-vindo ao E-Commerce App</h2>
+    <div class="text-center pt-20">
+      <h2 class="text-3xl font-bold text-gray-800">Bem-vindo ao E-Commerce App</h2>
       <p class="mt-4 text-gray-600">
-        Explore as categorias e produtos disponíveis ou gerencie a plataforma!
+        Aqui você pode gerenciar categorias e produtos de forma fácil e intuitiva.
       </p>
       <div class="mt-6 space-x-4">
         <a
-          href="/categories"
+          v-if="auth.user"
+          href="/dashboard"
           class="bg-gray-800 text-white px-6 py-3 rounded hover:bg-gray-700"
         >
-          Gerenciar Categorias
+          Aceder à Dashboard
         </a>
         <a
-          href="/products"
+          v-else
+          href="/login"
           class="bg-gray-800 text-white px-6 py-3 rounded hover:bg-gray-700"
         >
-          Gerenciar Produtos
+          Faça Login
         </a>
       </div>
     </div>
@@ -63,11 +62,26 @@
 
 <script>
 import { usePage } from "@inertiajs/vue3";
+import axios from "axios";
 
 export default {
   setup() {
     const { props } = usePage();
-    return { ...props };
+    const csrfToken = props?.csrf_token;
+
+    const logout = async () => {
+      try {
+        await axios.post('/logout', {}, {
+          headers: { 'X-CSRF-TOKEN': csrfToken },
+        });
+        window.location.href = '/login';
+      } catch (error) {
+        console.error("Erro ao fazer logout:", error);
+        alert("Ocorreu um erro ao tentar fazer logout.");
+      }
+    };
+
+    return { ...props, csrfToken, logout };
   },
 };
 </script>
