@@ -4,16 +4,12 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\CartController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
 
 Route::get('/', function () {
@@ -26,32 +22,40 @@ Route::get('/', function () {
     ]);
 });
 
+// Dashboard: acessível apenas a utilizadores autenticados
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Logout
 Route::post('/logout', function () {
     auth()->logout();
     return redirect('/login');
 })->name('logout');
 
-Route::middleware('auth')->group(function () {
-    // Gestão do perfil
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// Rotas protegidas por papéis
+Route::middleware(['auth'])->group(function () {
+    // Rotas para administradores
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+        Route::get('/categories', function () {
+            return Inertia::render('Categories');
+        })->name('categories');
+    
+        Route::get('/products', function () {
+            return Inertia::render('Products');
+        })->name('products');
+    });
 
-    // Rotas para as categorias e produtos
-    Route::get('/categories', function () {
-        return Inertia::render('Categories');
-    })->name('categories');
-
-    Route::get('/products', function () {
-        return Inertia::render('Products');
-    })->name('products');
+    // Rotas para utilizadores normais
+    Route::middleware(['role:user'])->group(function () {
+        Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+        Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+        Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+    });
 });
 
-// Página de visualização de produtos para utilizadores comuns
+// Página pública para todos os utilizadores
 Route::get('/shop', [\App\Http\Controllers\ProductController::class, 'showPublicProducts'])->name('shop');
 
-require __DIR__.'/auth.php';
+// Auth routes
+require __DIR__ . '/auth.php';

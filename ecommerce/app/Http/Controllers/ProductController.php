@@ -10,7 +10,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::paginate(10); // Paginação para admin
+        $products = Product::paginate(10);
         return Inertia::render('Admin/Products', [
             'products' => $products,
         ]);
