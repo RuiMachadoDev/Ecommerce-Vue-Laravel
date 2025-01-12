@@ -2,7 +2,6 @@
   <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6 mt-8 text-gray-800">
     <h1 class="text-2xl font-bold mb-6 text-center">Gestão de Produtos</h1>
 
-    <!-- Botão Adicionar Novo Produto -->
     <button
       @click="showCreateForm"
       class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition mb-4"
@@ -11,7 +10,7 @@
     </button>
 
     <!-- Lista de Produtos -->
-    <ul v-if="products.data.length" class="space-y-4">
+    <ul v-if="products?.data?.length > 0" class="space-y-4">
       <li
         v-for="product in products.data"
         :key="product.id"
@@ -21,6 +20,7 @@
           <h3 class="text-lg font-medium">{{ product.name }}</h3>
           <p class="text-gray-600">Preço: {{ product.price }} €</p>
           <p class="text-gray-600">Estoque: {{ product.stock }}</p>
+          <p class="text-gray-600">Categoria: {{ product.category?.name }}</p>
         </div>
         <div class="space-x-2">
           <button
@@ -38,10 +38,11 @@
         </div>
       </li>
     </ul>
-    <p v-else class="text-center text-gray-600">Nenhum produto encontrado.</p>
+    <p v-else-if="products" class="text-center text-gray-600">Nenhum produto encontrado.</p>
+    <p v-else class="text-center text-gray-600">Carregando produtos...</p>
 
     <!-- Paginação -->
-    <div v-if="products.data.length" class="mt-6 flex justify-center items-center space-x-4">
+    <div v-if="products?.data?.length > 0" class="mt-6 flex justify-center items-center space-x-4">
       <button
         v-if="products.prev_page_url"
         @click="fetchProducts(products.prev_page_url)"
@@ -119,7 +120,7 @@ import axios from 'axios';
 
 export default {
   setup() {
-    const products = ref({ data: [], prev_page_url: null, next_page_url: null });
+    const products = ref({ data: [] });
     const categories = ref([]);
     const formVisible = ref(false);
     const formData = reactive({
@@ -132,14 +133,27 @@ export default {
     });
     const message = ref('');
 
-    const fetchProducts = async (url = '/api/products') => {
-      const response = await axios.get(url);
-      products.value = response.data;
+    const fetchProducts = async (url = '/products') => {
+      try {
+        const response = await axios.get(url);
+        console.log('Resposta da API:', response.data);
+        products.value = response.data;
+      } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+        if (error.response) {
+          console.error('Resposta do servidor:', error.response.data);
+        }
+        products.value = { data: [] };
+      }
     };
 
     const fetchCategories = async () => {
-      const response = await axios.get('/api/categories');
-      categories.value = response.data;
+      try {
+        const response = await axios.get('/api/categories');
+        categories.value = response.data;
+      } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+      }
     };
 
     const showCreateForm = () => {

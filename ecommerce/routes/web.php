@@ -41,9 +41,7 @@ Route::middleware(['auth'])->group(function () {
             return Inertia::render('Categories');
         })->name('categories');
     
-        Route::get('/products', function () {
-            return Inertia::render('Products');
-        })->name('products');
+        Route::get('/products', [\App\Http\Controllers\ProductController::class, 'index'])->name('products');
     });
 
     // Rotas para utilizadores normais

@@ -8,17 +8,21 @@ use Inertia\Inertia;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::paginate(10);
-        return Inertia::render('Admin/Products', [
-            'products' => $products,
+        if ($request->wantsJson()) {
+            $products = Product::with('category')->paginate(10);
+            return response()->json($products);
+        }
+
+        return Inertia::render('Products', [
+            'products' => Product::with('category')->paginate(10),
         ]);
     }
 
     public function showPublicProducts()
     {
-        $products = Product::where('is_active', true)->paginate(12); // Apenas produtos ativos
+        $products = Product::where('is_active', true)->paginate(12);
         return Inertia::render('Shop', [
             'products' => $products,
         ]);
