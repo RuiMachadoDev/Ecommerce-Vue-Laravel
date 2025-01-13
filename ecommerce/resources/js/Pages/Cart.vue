@@ -36,13 +36,14 @@ export default {
     const cart = props.cart;
 
     const removeFromCart = (id) => {
-      axios.post('/cart/remove', { id })
-        .then(response => {
+      axios
+        .post("/cart/remove", { id })
+        .then((response) => {
           alert(response.data.message);
           location.reload();
         })
-        .catch(error => {
-          console.error('Erro ao remover item do carrinho:', error);
+        .catch((error) => {
+          console.error("Erro ao remover item do carrinho:", error);
         });
     };
 

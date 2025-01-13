@@ -21,19 +21,26 @@ class CartController extends Controller
 
     public function add(Request $request)
     {
-        $product = $request->input('product');
+        $productId = $request->input('product_id');
         $quantity = $request->input('quantity', 1);
 
         $cart = Session::get('cart', []);
-        $cart[$product['id']] = [
-            'id' => $product['id'],
-            'name' => $product['name'],
-            'price' => $product['price'],
-            'quantity' => isset($cart[$product['id']]) ? $cart[$product['id']]['quantity'] + $quantity : $quantity,
-        ];
+        if (isset($cart[$productId])) {
+            $cart[$productId]['quantity'] += $quantity;
+        } else {
+            // Busque os detalhes do produto no banco de dados
+            $product = \App\Models\Product::findOrFail($productId);
+            $cart[$productId] = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'quantity' => $quantity,
+            ];
+        }
+
         Session::put('cart', $cart);
 
-        return response()->json(['message' => 'Produto adicionado ao carrinho']);
+        return response()->json(['message' => 'Produto adicionado ao carrinho com sucesso']);
     }
 
     public function remove(Request $request)

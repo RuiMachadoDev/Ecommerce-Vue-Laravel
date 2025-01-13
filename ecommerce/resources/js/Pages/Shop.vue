@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import { usePage, router } from "@inertiajs/vue3";
 import axios from "axios";
 
 export default {
@@ -77,38 +78,47 @@ export default {
     },
   },
   setup() {
+    const { props } = usePage();
+    const auth = props.auth;
+
     const goToPage = (url) => {
-      window.location.href = url;
+      router.visit(url);
     };
 
     const viewDetails = (id) => {
-      // Redireciona para a página de detalhes do produto
-      window.location.href = `/products/${id}`;
+      router.visit(`/products/${id}`);
     };
 
     const addToCart = (product) => {
-    if (!auth.user) {
+      if (!auth.user) {
         const proceed = confirm(
-        "Você precisa estar autenticado para adicionar produtos ao carrinho. Deseja fazer login ou se registrar?"
+          "Você precisa de estar autenticado para adicionar produtos ao carrinho. Deseja fazer login ou registar-se?"
         );
         if (proceed) {
-        window.location.href = "/login"; // Redireciona para a página de login
+          router.visit("/login");
         }
         return;
-    }
+      }
 
-    axios
-        .post("/cart/add", { product, quantity: 1 }, {
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        },
-        })
+      axios
+        .post(
+          "/cart/add",
+          { product_id: product.id, quantity: 1 },
+          {
+            headers: {
+              "X-CSRF-TOKEN": document
+                .querySelector('meta[name="csrf-token"]')
+                .getAttribute("content"),
+            },
+          }
+        )
         .then(() => {
-        alert("Produto adicionado ao carrinho com sucesso!");
+          alert("Produto adicionado ao carrinho com sucesso!");
+          router.visit("/cart");
         })
         .catch((error) => {
-        console.error("Erro ao adicionar ao carrinho:", error);
-        alert("Erro ao adicionar ao carrinho. Tente novamente.");
+          console.error("Erro ao adicionar ao carrinho:", error);
+          alert("Erro ao adicionar ao carrinho. Tente novamente.");
         });
     };
 

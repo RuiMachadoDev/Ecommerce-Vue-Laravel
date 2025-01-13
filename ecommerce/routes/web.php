@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Rotas para utilizadores normais
-    Route::middleware('role:user')->group(function () {
+    Route::middleware('auth')->group(function () {
         Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
         Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
         Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
