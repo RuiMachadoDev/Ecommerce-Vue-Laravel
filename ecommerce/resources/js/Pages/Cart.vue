@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen bg-gray-100 p-6">
     <h2 class="text-2xl font-bold text-gray-800 mb-6">Carrinho de Compras</h2>
-    <div v-if="cart.length" class="space-y-4">
+    <div v-if="cart && Object.keys(cart).length > 0" class="space-y-4">
       <div
-        v-for="item in cart"
-        :key="item.id"
+        v-for="(item, index) in cart"
+        :key="index"
         class="bg-white shadow-lg rounded-lg p-4 flex justify-between items-center"
       >
         <div>

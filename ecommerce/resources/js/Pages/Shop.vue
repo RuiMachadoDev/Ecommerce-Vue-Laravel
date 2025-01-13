@@ -92,7 +92,7 @@ export default {
     const addToCart = (product) => {
       if (!auth.user) {
         const proceed = confirm(
-          "Você precisa de estar autenticado para adicionar produtos ao carrinho. Deseja fazer login ou registar-se?"
+          "Você precisa estar autenticado para adicionar produtos ao carrinho. Deseja fazer login ou se registrar?"
         );
         if (proceed) {
           router.visit("/login");
@@ -114,7 +114,7 @@ export default {
         )
         .then(() => {
           alert("Produto adicionado ao carrinho com sucesso!");
-          router.visit("/cart");
+          router.visit("/cart"); // Redireciona para o carrinho após adicionar
         })
         .catch((error) => {
           console.error("Erro ao adicionar ao carrinho:", error);
