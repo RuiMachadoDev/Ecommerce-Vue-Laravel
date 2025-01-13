@@ -20,26 +20,26 @@
 
     <!-- Content -->
     <div class="pt-20 px-8">
-      <h2 class="text-2xl font-bold text-gray-800">Bem-vindo ao Painel Administrativo</h2>
-      <p class="mt-4 text-gray-600">Faça a gestão da sua aplicação de forma rápida e fácil.</p>
+      <h2 class="text-2xl font-bold text-gray-800">Bem-vindo à Loja</h2>
+      <p class="mt-4 text-gray-600">Explore os produtos ou aceda ao seu carrinho.</p>
 
       <!-- Quick Links -->
-      <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
         <a
-          href="/categories"
-          class="bg-gray-800 text-white px-6 py-4 rounded flex items-center justify-between hover:bg-gray-700"
+          href="/shop"
+          class="bg-blue-600 text-white px-6 py-4 rounded flex items-center justify-between hover:bg-blue-500"
         >
-          <span>Gerir Categorias</span>
+          <span>Ir para a Loja</span>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </a>
 
         <a
-          href="/products"
-          class="bg-gray-800 text-white px-6 py-4 rounded flex items-center justify-between hover:bg-gray-700"
+          href="/cart"
+          class="bg-green-600 text-white px-6 py-4 rounded flex items-center justify-between hover:bg-green-500"
         >
-          <span>Gerir Produtos</span>
+          <span>Ver Carrinho</span>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>

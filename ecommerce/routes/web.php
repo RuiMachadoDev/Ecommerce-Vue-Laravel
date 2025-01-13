@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +25,10 @@ Route::get('/', function () {
 
 // Dashboard: acessível apenas a utilizadores autenticados
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    if (auth()->user()->hasRole('admin')) {
+        return Inertia::render('AdminDashboard');
+    }
+    return Inertia::render('UserDashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Logout
@@ -34,18 +38,18 @@ Route::post('/logout', function () {
 })->name('logout');
 
 // Rotas protegidas por papéis
-Route::middleware(['auth'])->group(function () {
+Route::middleware('auth')->group(function () {
     // Rotas para administradores
-    Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::middleware('role:admin')->group(function () {
         Route::get('/categories', function () {
             return Inertia::render('Categories');
         })->name('categories');
-    
-        Route::get('/products', [\App\Http\Controllers\ProductController::class, 'index'])->name('products');
+
+        Route::get('/products', [ProductController::class, 'index'])->name('products');
     });
 
     // Rotas para utilizadores normais
-    Route::middleware(['role:user'])->group(function () {
+    Route::middleware('role:user')->group(function () {
         Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
         Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
         Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');

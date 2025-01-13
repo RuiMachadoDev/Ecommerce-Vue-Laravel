@@ -38,7 +38,7 @@
     <div class="text-center pt-20">
       <h2 class="text-3xl font-bold text-gray-800">Bem-vindo ao E-Commerce App</h2>
       <p class="mt-4 text-gray-600">
-        Aqui você pode gerenciar categorias e produtos de forma fácil e intuitiva.
+        Uma app intuitiva tanto para users comuns como para administradores.
       </p>
       <div class="mt-6 space-x-4">
         <a
@@ -46,7 +46,7 @@
           href="/dashboard"
           class="bg-gray-800 text-white px-6 py-3 rounded hover:bg-gray-700"
         >
-          Aceder à Dashboard
+          Entrar
         </a>
         <a
           v-else
