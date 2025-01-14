@@ -9,14 +9,7 @@ export default defineConfig({
             input: 'resources/js/app.js',
             refresh: true,
         }),
-        vue({
-            template: {
-                transformAssetUrls: {
-                    base: null,
-                    includeAbsolute: false,
-                },
-            },
-        }),
+        vue(),
     ],
     resolve: {
         alias: {
@@ -24,14 +17,16 @@ export default defineConfig({
         },
     },
     build: {
-        outDir: 'public/build',
+        outDir: 'public/build', // Garante que o build estará em public/build
         emptyOutDir: true,
-        manifest: true,
-    },
-    server: {
-        host: '0.0.0.0',
-        port: 3000,
-        strictPort: true,
-        https: false,
+        rollupOptions: {
+            output: {
+                assetFileNames: (assetInfo) => {
+                    return assetInfo.name === 'manifest.json' 
+                        ? 'manifest.json' 
+                        : 'assets/[name]-[hash][extname]';
+                },
+            },
+        },
     },
 });
