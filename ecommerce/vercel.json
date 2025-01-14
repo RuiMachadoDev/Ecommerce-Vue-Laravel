@@ -8,6 +8,10 @@
   ],
   "routes": [
     {
+      "src": "/diagnostic.php",
+      "dest": "/public/diagnostic.php"
+    },
+    {
       "src": "/(.*)",
       "dest": "/public/index.php"
     }
