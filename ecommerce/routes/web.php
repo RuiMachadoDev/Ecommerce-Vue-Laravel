@@ -59,5 +59,23 @@ Route::middleware('auth')->group(function () {
 // Página pública para todos os utilizadores
 Route::get('/shop', [\App\Http\Controllers\ProductController::class, 'showPublicProducts'])->name('shop');
 
+Route::get('/diagnostic', function () {
+    return response()->json([
+        'php_version' => phpversion(),
+        'laravel_version' => app()->version(),
+        'storage_path_writable' => is_writable(storage_path()),
+        'app_url' => config('app.url'),
+    ]);
+});
+
+Route::get('/db-test', function () {
+    try {
+        \DB::connection()->getPdo();
+        return 'Database is connected!';
+    } catch (\Exception $e) {
+        return 'Database connection failed: ' . $e->getMessage();
+    }
+});
+
 // Auth routes
 require __DIR__ . '/auth.php';
