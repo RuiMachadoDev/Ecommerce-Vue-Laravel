@@ -75,8 +75,13 @@ export default {
     const formData = reactive({ id: null, name: '', slug: '' });
 
     const fetchCategories = async () => {
-      const response = await axios.get('/api/categories');
-      categories.value = response.data;
+      try {
+        const response = await axios.get('/api/categories');
+        console.log('Headers enviados:', axios.defaults.headers.common);
+        categories.value = response.data;
+      } catch (error) {
+        console.error('Erro ao carregar categorias:', error.response);
+      }
     };
 
     const showCreateForm = () => {
@@ -94,7 +99,12 @@ export default {
     };
 
     const initializeCsrf = async () => {
+      try {
         await axios.get('/sanctum/csrf-cookie');
+        console.log('CSRF token carregado.');
+      } catch (error) {
+        console.error('Erro ao carregar CSRF token:', error.response);
+      }
     };
 
     const saveCategory = async () => {
