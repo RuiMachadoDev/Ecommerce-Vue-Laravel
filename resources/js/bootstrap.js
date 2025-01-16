@@ -13,16 +13,14 @@ axios.defaults.baseURL = 'https://ecommerce-laravel-9b8fcb523cea.herokuapp.com';
 axios.defaults.withCredentials = true; // Permitir envio de cookies para autenticação
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-// Função para carregar o token CSRF automaticamente
-function loadCsrfToken() {
-    return axios.get('/sanctum/csrf-cookie')
-        .then(() => {
-            console.log('Token CSRF carregado com sucesso.');
-        })
-        .catch(error => {
-            console.error('Erro ao carregar o token CSRF:', error);
-        });
-}
+// Carregar token CSRF
+window.axios.get('/sanctum/csrf-cookie')
+    .then(() => {
+        console.log('Token CSRF carregado com sucesso.');
+    })
+    .catch(error => {
+        console.error('Erro ao carregar o token CSRF:', error);
+    });
 
 // Carrega o token CSRF ao iniciar
 loadCsrfToken();
