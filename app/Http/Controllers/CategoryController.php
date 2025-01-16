@@ -21,8 +21,11 @@ class CategoryController extends Controller
      */
     public function index()
     {
+        \Log::info('Cabeçalhos recebidos', request()->headers->all());
+        \Log::info('Sessão', session()->all());
+
         if (!auth()->check()) {
-            \Log::info('Utilizador não autenticado ao aceder às categorias.');
+            \Log::info('Utilizador não autenticado.');
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
