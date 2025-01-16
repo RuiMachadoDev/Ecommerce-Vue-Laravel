@@ -10,16 +10,16 @@ class RoleMiddleware
 {
     public function handle($request, Closure $next, $role)
     {
-        \Log::info('Middleware role:admin', [
-            'authenticated' => Auth::check(),
-            'user_roles' => Auth::check() ? Auth::user()->roles : null,
+        \Log::info('Role Middleware Triggered', [
+            'user' => auth()->user(),
+            'roles' => auth()->check() ? auth()->user()->getRoleNames() : null,
             'required_role' => $role,
         ]);
-    
-        if (!Auth::check() || !Auth::user()->hasRole($role)) {
+
+        if (!auth()->check() || !auth()->user()->hasRole($role)) {
             abort(403, 'This action is unauthorized.');
         }
-    
+
         return $next($request);
     }
 }

@@ -35,10 +35,14 @@ class CategoryController extends Controller
     /**
      * Cria uma nova categoria.
      */
-    
+
     public function store(Request $request)
     {
-        dd(auth()->check(), auth()->user()->getRoleNames());
+        \Log::info('Store Method Triggered', [
+            'authenticated' => auth()->check(),
+            'user' => auth()->user(),
+            'roles' => auth()->user() ? auth()->user()->getRoleNames() : null,
+        ]);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',

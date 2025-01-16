@@ -22,6 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Protege as rotas com autenticação e verifica o papel de admin
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
-    Route::apiResource('categories', CategoryController::class);
+    
     Route::apiResource('products', ProductController::class);
 });
+
+Route::apiResource('categories', CategoryController::class);
