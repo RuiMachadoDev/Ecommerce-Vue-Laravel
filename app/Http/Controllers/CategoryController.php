@@ -37,7 +37,7 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        dd(auth()->user()->hasRole('admin'));
+        dd(auth()->check(), auth()->user()->roles);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
