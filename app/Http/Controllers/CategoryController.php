@@ -37,20 +37,13 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        // Verifica autenticação
-        if (!auth()->check()) {
-            \Log::info('Ação não permitida: usuário não autenticado ao tentar criar categoria.');
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
+        dd(auth()->user()->hasRole('admin'));
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories',
         ]);
 
         $category = Category::create($validated);
-
-        \Log::info('Categoria criada com sucesso:', ['category' => $category]);
 
         return response()->json($category, 201);
     }

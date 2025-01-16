@@ -8,16 +8,10 @@ use Spatie\Permission\Exceptions\UnauthorizedException;
 
 class RoleMiddleware
 {
-    public function handle($request, Closure $next, $role, $guard = null)
+    public function handle($request, Closure $next, $role)
     {
-        $authGuard = Auth::guard($guard);
-
-        if ($authGuard->guest()) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
-        }
-
-        if (!$authGuard->user()->hasRole($role)) {
-            return response()->json(['message' => 'Unauthorized: Missing required role'], 403);
+        if (!Auth::check() || !Auth::user()->hasRole($role)) {
+            abort(403, 'This action is unauthorized.');
         }
 
         return $next($request);
