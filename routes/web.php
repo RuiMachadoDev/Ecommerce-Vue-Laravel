@@ -25,10 +25,13 @@ Route::get('/', function () {
 
 // Dashboard: acessível apenas a utilizadores autenticados
 Route::get('/dashboard', function () {
-    if (auth()->user()->hasRole('admin')) {
+    $user = auth()->user();
+    if ($user && $user->hasRole('admin')) {
         return Inertia::render('AdminDashboard');
+    } elseif ($user) {
+        return Inertia::render('UserDashboard');
     }
-    return Inertia::render('UserDashboard');
+    return redirect('/login');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Logout
@@ -49,11 +52,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // Rotas para utilizadores normais
-    Route::middleware('auth')->group(function () {
-        Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-        Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-        Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
-    });
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 });
 
 // Página pública para todos os utilizadores
@@ -66,7 +67,7 @@ Route::get('/diagnostic', function () {
         'storage_path_writable' => is_writable(storage_path()),
         'app_url' => config('app.url'),
     ]);
-});
+})->middleware('auth:sanctum');
 
 Route::get('/db-test', function () {
     try {

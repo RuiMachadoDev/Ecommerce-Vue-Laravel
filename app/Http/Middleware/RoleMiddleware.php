@@ -13,11 +13,11 @@ class RoleMiddleware
         $authGuard = Auth::guard($guard);
 
         if ($authGuard->guest()) {
-            throw UnauthorizedException::notLoggedIn();
+            return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
-        if (! $authGuard->user()->hasRole($role)) {
-            throw UnauthorizedException::forRoles([$role]);
+        if (!$authGuard->user()->hasRole($role)) {
+            return response()->json(['message' => 'Unauthorized: Missing required role'], 403);
         }
 
         return $next($request);
