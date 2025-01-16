@@ -35,9 +35,10 @@ class CategoryController extends Controller
     /**
      * Cria uma nova categoria.
      */
+    
     public function store(Request $request)
     {
-        dd(auth()->check(), auth()->user()->roles);
+        dd(auth()->check(), auth()->user()->getRoleNames());
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
