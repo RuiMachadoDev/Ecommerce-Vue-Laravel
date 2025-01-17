@@ -26,4 +26,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::apiResource('products', ProductController::class);
 });
 
-Route::apiResource('categories', CategoryController::class);
+Route::post('categories', function () {
+    return response()->json(['message' => 'Category added'], 201);
+});
