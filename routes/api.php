@@ -17,7 +17,7 @@ use App\Http\Controllers\ProductController;
 */
 
 // Protege as rotas com autenticação e verifica o papel de admin
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['web', 'auth', 'role:admin'])->group(function () {
     Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');
     Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
     
