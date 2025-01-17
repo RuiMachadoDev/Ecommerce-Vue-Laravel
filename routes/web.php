@@ -26,20 +26,17 @@ Route::get('/', function () {
 // Dashboard: acessível apenas a utilizadores autenticados
 Route::get('/dashboard', function () {
     $user = auth()->user();
-    \Log::info('Accessing Dashboard', [
-        'user_id' => $user ? $user->id : null,
-        'roles' => $user ? $user->getRoleNames() : [],
-    ]);
+
+    if (!$user) {
+        return redirect('/login');
+    }
 
     if ($user->hasRole('admin')) {
-        \Log::info('Admin Dashboard accessed.', ['user_id' => $user->id]);
         return Inertia::render('AdminDashboard');
     } elseif ($user->hasRole('user')) {
-        \Log::info('User Dashboard accessed.', ['user_id' => $user->id]);
         return Inertia::render('UserDashboard');
     }
 
-    \Log::warning('No role assigned.', ['user_id' => $user ? $user->id : 'guest']);
     return redirect('/login');
 })->middleware(['auth', 'verified'])->name('dashboard');
 

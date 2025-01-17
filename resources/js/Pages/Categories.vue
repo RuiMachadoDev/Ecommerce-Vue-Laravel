@@ -112,11 +112,10 @@ export default {
     const saveCategory = async () => {
       try {
         await initializeCsrf();
-        console.log('Dados a serem enviados:', formData);
         if (formData.id) {
-          await axios.put(`/api/categories/${formData.id}`, formData);
+          await axios.put(`/api/categories/${formData.id}`, formData, { withCredentials: true });
         } else {
-          await axios.post('/api/categories', formData);
+          await axios.post('/api/categories', formData, { withCredentials: true });
         }
         fetchCategories();
         formVisible.value = false;
