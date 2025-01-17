@@ -32,19 +32,28 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        \Log::info('Verificando permissões', [
-            'authenticated' => auth()->check(),
+        \Log::info('Iniciando método store em CategoryController', [
+            'dados_recebidos' => $request->all(),
             'user' => auth()->user(),
-            'permissions' => auth()->user() ? auth()->user()->getAllPermissions() : null,
         ]);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+            ]);
 
-        $category = Category::create($validated);
+            $category = Category::create($validated);
 
-        return response()->json($category, 201);
+            \Log::info('Categoria criada com sucesso:', ['category' => $category]);
+
+            return response()->json($category, 201);
+        } catch (\Throwable $e) {
+            \Log::error('Erro ao criar categoria:', [
+                'mensagem' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['message' => 'Server Error'], 500);
+        }
     }
 
     /**
