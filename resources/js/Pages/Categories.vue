@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import axios from 'axios';
 
 axios.defaults.withCredentials = true;
@@ -76,13 +76,24 @@ export default {
     const formVisible = ref(false);
     const formData = reactive({ id: null, name: '', slug: '' });
 
+    const csrfToken = ref(null);
+
     const fetchCategories = async () => {
       try {
         const response = await axios.get('/api/categories');
-        console.log('Headers enviados:', axios.defaults.headers.common);
         categories.value = response.data;
       } catch (error) {
         console.error('Erro ao carregar categorias:', error.response);
+      }
+    };
+
+    const initializeCsrf = async () => {
+      try {
+        const response = await axios.get('/sanctum/csrf-cookie');
+        csrfToken.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        console.log('CSRF Token inicializado:', csrfToken.value);
+      } catch (error) {
+        console.error('Erro ao carregar CSRF token:', error.response);
       }
     };
 
@@ -100,40 +111,41 @@ export default {
       formData.slug = category.slug;
     };
 
-    const initializeCsrf = async () => {
-      try {
-        await axios.get('/sanctum/csrf-cookie');
-        console.log('CSRF token carregado.');
-      } catch (error) {
-        console.error('Erro ao carregar CSRF token:', error.response);
-      }
-    };
-
     const saveCategory = async () => {
       try {
-        console.log('CSRF Token:', csrfToken);
         console.log('Dados enviados:', formData);
 
         await axios.post('/api/categories', formData, {
-          withCredentials: true, // Garante que as credenciais sejam enviadas
+          withCredentials: true,
           headers: {
-            'X-CSRF-TOKEN': csrfToken,
+            'X-CSRF-TOKEN': csrfToken.value,
           },
         });
 
-        fetchCategories();
+        await fetchCategories();
         formVisible.value = false;
       } catch (error) {
-        console.error('Erro na criação da categoria:', error.response?.data || error.message);
+        console.error('Erro ao salvar categoria:', error.response?.data || error.message);
       }
     };
 
     const deleteCategory = async (id) => {
-      await axios.delete(`/api/categories/${id}`);
-      fetchCategories();
+      try {
+        await axios.delete(`/api/categories/${id}`, {
+          headers: {
+            'X-CSRF-TOKEN': csrfToken.value,
+          },
+        });
+        await fetchCategories();
+      } catch (error) {
+        console.error('Erro ao excluir categoria:', error.response?.data || error.message);
+      }
     };
 
-    fetchCategories();
+    onMounted(async () => {
+      await initializeCsrf();
+      await fetchCategories();
+    });
 
     return {
       categories,
