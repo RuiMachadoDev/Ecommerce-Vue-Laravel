@@ -27,13 +27,9 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = auth()->user();
 
-    if (!$user) {
-        return redirect('/login');
-    }
-
-    if ($user->hasRole('admin')) {
+    if ($user && $user->hasRole('admin')) {
         return Inertia::render('AdminDashboard');
-    } elseif ($user->hasRole('user')) {
+    } elseif ($user && $user->hasRole('user')) {
         return Inertia::render('UserDashboard');
     }
 

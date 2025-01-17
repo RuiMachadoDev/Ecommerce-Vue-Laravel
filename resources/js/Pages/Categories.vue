@@ -111,16 +111,20 @@ export default {
 
     const saveCategory = async () => {
       try {
-        await initializeCsrf();
-        if (formData.id) {
-          await axios.put(`/api/categories/${formData.id}`, formData, { withCredentials: true });
-        } else {
-          await axios.post('/api/categories', formData, { withCredentials: true });
-        }
+        console.log('CSRF Token:', csrfToken);
+        console.log('Dados enviados:', formData);
+
+        await axios.post('/api/categories', formData, {
+          withCredentials: true, // Garante que as credenciais sejam enviadas
+          headers: {
+            'X-CSRF-TOKEN': csrfToken,
+          },
+        });
+
         fetchCategories();
         formVisible.value = false;
       } catch (error) {
-        console.error('Erro na requisição:', error.response?.data || error.message);
+        console.error('Erro na criação da categoria:', error.response?.data || error.message);
       }
     };
 
