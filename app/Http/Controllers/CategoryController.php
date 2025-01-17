@@ -32,9 +32,11 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        \Log::info('Iniciando método store em CategoryController', [
-            'dados_recebidos' => $request->all(),
+        \Log::info('Store Method Triggered', [
+            'authenticated' => auth()->check(),
             'user' => auth()->user(),
+            'roles' => auth()->user() ? auth()->user()->getRoleNames() : null,
+            'request_data' => $request->all(),
         ]);
 
         try {
@@ -44,13 +46,13 @@ class CategoryController extends Controller
 
             $category = Category::create($validated);
 
-            \Log::info('Categoria criada com sucesso:', ['category' => $category]);
+            \Log::info('Category Created Successfully:', ['category' => $category]);
 
             return response()->json($category, 201);
         } catch (\Throwable $e) {
-            \Log::error('Erro ao criar categoria:', [
-                'mensagem' => $e->getMessage(),
-                'stack_trace' => $e->getTraceAsString(),
+            \Log::error('Error in Category Store:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
             return response()->json(['message' => 'Server Error'], 500);
         }
