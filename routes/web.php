@@ -26,11 +26,20 @@ Route::get('/', function () {
 // Dashboard: acessível apenas a utilizadores autenticados
 Route::get('/dashboard', function () {
     $user = auth()->user();
-    if ($user && $user->hasRole('admin')) {
+    \Log::info('Accessing Dashboard', [
+        'user_id' => $user ? $user->id : null,
+        'roles' => $user ? $user->getRoleNames() : [],
+    ]);
+
+    if ($user->hasRole('admin')) {
+        \Log::info('Admin Dashboard accessed.', ['user_id' => $user->id]);
         return Inertia::render('AdminDashboard');
-    } elseif ($user) {
+    } elseif ($user->hasRole('user')) {
+        \Log::info('User Dashboard accessed.', ['user_id' => $user->id]);
         return Inertia::render('UserDashboard');
     }
+
+    \Log::warning('No role assigned.', ['user_id' => $user ? $user->id : 'guest']);
     return redirect('/login');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -60,23 +69,6 @@ Route::middleware('auth')->group(function () {
 // Página pública para todos os utilizadores
 Route::get('/shop', [\App\Http\Controllers\ProductController::class, 'showPublicProducts'])->name('shop');
 
-Route::get('/diagnostic', function () {
-    return response()->json([
-        'php_version' => phpversion(),
-        'laravel_version' => app()->version(),
-        'storage_path_writable' => is_writable(storage_path()),
-        'app_url' => config('app.url'),
-    ]);
-})->middleware('auth:sanctum');
-
-Route::get('/db-test', function () {
-    try {
-        \DB::connection()->getPdo();
-        return 'Database is connected!';
-    } catch (\Exception $e) {
-        return 'Database connection failed: ' . $e->getMessage();
-    }
-});
 
 // Auth routes
 require __DIR__ . '/auth.php';
