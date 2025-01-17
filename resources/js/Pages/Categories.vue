@@ -108,18 +108,19 @@ export default {
     };
 
     const saveCategory = async () => {
-        try {
-            await initializeCsrf();
-            if (formData.id) {
-                await axios.put(`/api/categories/${formData.id}`, formData);
-            } else {
-                await axios.post('/api/categories', formData);
-            }
-            fetchCategories();
-            formVisible.value = false;
-        } catch (error) {
-            console.error(error.response.data);
+      try {
+        await initializeCsrf();
+        console.log('Dados a serem enviados:', formData);
+        if (formData.id) {
+          await axios.put(`/api/categories/${formData.id}`, formData);
+        } else {
+          await axios.post('/api/categories', formData);
         }
+        fetchCategories();
+        formVisible.value = false;
+      } catch (error) {
+        console.error('Erro na requisição:', error.response?.data || error.message);
+      }
     };
 
     const deleteCategory = async (id) => {

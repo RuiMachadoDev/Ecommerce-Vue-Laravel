@@ -6,27 +6,28 @@
 
 import axios from 'axios';
 
+// Define o axios como uma propriedade global
 window.axios = axios;
 
 // Configuração global do Axios
 window.axios.defaults.baseURL = 'https://ecommerce-laravel-9b8fcb523cea.herokuapp.com';
-window.axios.defaults.withCredentials = true;
+window.axios.defaults.withCredentials = true; // Necessário para cookies de sessão (CSRF)
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-// Obter o token CSRF ao carregar a aplicação
-window.axios.get('/sanctum/csrf-cookie');
-
-// Carregar token CSRF
-window.axios.get('/sanctum/csrf-cookie')
-    .then(() => {
+// Função para carregar o token CSRF
+const loadCsrfToken = async () => {
+    try {
+        await window.axios.get('/sanctum/csrf-cookie');
         console.log('Token CSRF carregado com sucesso.');
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Erro ao carregar o token CSRF:', error);
-    });
+    }
+};
 
-// Carrega o token CSRF ao iniciar
+// Carregar o token CSRF ao iniciar a aplicação
 loadCsrfToken();
+
+export default loadCsrfToken;
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

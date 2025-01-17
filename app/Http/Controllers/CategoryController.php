@@ -19,13 +19,15 @@ class CategoryController extends Controller
     /**
      * Lista todas as categorias.
      */
+    
     public function index()
     {
-        \Log::info('Cabeçalhos recebidos', request()->headers->all());
-        \Log::info('Sessão', session()->all());
+        \Log::info('Autenticação', [
+            'auth_check' => auth()->check(),
+            'user' => auth()->user(),
+        ]);
 
         if (!auth()->check()) {
-            \Log::info('Utilizador não autenticado.');
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 

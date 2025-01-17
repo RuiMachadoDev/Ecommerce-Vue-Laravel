@@ -22,10 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Protege as rotas com autenticação e verifica o papel de admin
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
-    
+    Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');
+    Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::apiResource('products', ProductController::class);
-});
-
-Route::post('categories', function () {
-    return response()->json(['message' => 'Category added'], 201);
 });
