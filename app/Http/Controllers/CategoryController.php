@@ -10,7 +10,7 @@ class CategoryController extends Controller
     public function __construct()
     {
         // Aplica o middleware para verificar se o utilizador está autenticado
-        $this->middleware('auth:sanctum');
+        $this->middleware('auth');
 
         // Permissões específicas para métodos
         $this->middleware('can:manage categories')->only(['store', 'update', 'destroy']);
@@ -20,19 +20,11 @@ class CategoryController extends Controller
      * Lista todas as categorias.
      */
     
-    public function index()
-    {
-        \Log::info('Autenticação', [
-            'auth_check' => auth()->check(),
-            'user' => auth()->user(),
-        ]);
-
-        if (!auth()->check()) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
-        return Category::all();
-    }
+     public function index()
+     {
+         // Retorna todas as categorias
+         return response()->json(Category::all());
+     }
 
     /**
      * Cria uma nova categoria.
@@ -40,10 +32,10 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        \Log::info('Store Method Triggered', [
+        \Log::info('Verificando permissões', [
             'authenticated' => auth()->check(),
             'user' => auth()->user(),
-            'roles' => auth()->user() ? auth()->user()->getRoleNames() : null,
+            'permissions' => auth()->user() ? auth()->user()->getAllPermissions() : null,
         ]);
 
         $validated = $request->validate([

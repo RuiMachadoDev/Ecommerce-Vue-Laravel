@@ -68,6 +68,8 @@
 import { ref, reactive } from 'vue';
 import axios from 'axios';
 
+axios.defaults.withCredentials = true;
+
 export default {
   setup() {
     const categories = ref([]);
