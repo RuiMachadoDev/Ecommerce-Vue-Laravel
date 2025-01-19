@@ -7,15 +7,17 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->wantsJson()) {
-            return response()->json(Category::paginate(10));
+        $categories = Category::all();
+
+        if ($categories->isEmpty()) {
+            \Log::info('Nenhuma categoria encontrada.');
+            return response()->json([], 200);
         }
 
-        return Inertia::render('Categories', [
-            'categories' => Category::paginate(10),
-        ]);
+        \Log::info('Categorias retornadas:', $categories->toArray());
+        return response()->json($categories, 200);
     }
 
     public function store(Request $request)

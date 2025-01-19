@@ -9,21 +9,23 @@
       Adicionar Nova Categoria
     </button>
 
-    <ul v-if="categories && categories.length" class="space-y-4">
+    <ul v-if="categories.length > 0" class="space-y-4">
       <li
         v-for="category in categories"
-        :key="category?.id"
+        :key="category?.id || Math.random()" <!-- Adicione fallback ao `key` -->
         class="flex justify-between items-center bg-gray-100 p-4 rounded-lg shadow-sm"
       >
-        <span class="text-lg font-medium">{{ category?.name || 'Sem Nome' }}</span>
+        <span class="text-lg font-medium">{{ category?.name || 'Categoria Inválida' }}</span>
         <div class="space-x-2">
           <button
+            v-if="category"
             @click="editCategory(category)"
             class="bg-gray-800 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition"
           >
             Editar
           </button>
           <button
+            v-if="category"
             @click="deleteCategory(category?.id)"
             class="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-500 transition"
           >
@@ -82,9 +84,11 @@ export default {
     const fetchCategories = async () => {
       try {
         const response = await axios.get('/api/categories');
+        console.log('Categorias carregadas:', response.data);
         categories.value = response.data;
       } catch (error) {
-        console.error('Erro ao carregar categorias:', error.response);
+        console.error('Erro ao carregar categorias:', error.response || error.message);
+        categories.value = [];
       }
     };
 
