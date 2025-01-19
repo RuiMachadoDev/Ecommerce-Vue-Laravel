@@ -25,7 +25,7 @@ class CategoryController extends Controller
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
-                'slug' => 'required|string|unique:categories,slug',
+                'slug' => 'required|string',
             ]);
     
             $category = Category::create($validated);
