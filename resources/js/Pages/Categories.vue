@@ -114,14 +114,16 @@ export default {
     const saveCategory = async () => {
       try {
         console.log('Dados enviados:', formData);
+        console.log('CSRF Token:', csrfToken.value);
 
-        await axios.post('/api/categories', formData, {
+        const response = await axios.post('/api/categories', formData, {
           withCredentials: true,
           headers: {
             'X-CSRF-TOKEN': csrfToken.value,
           },
         });
 
+        console.log('Resposta da API:', response.data);
         await fetchCategories();
         formVisible.value = false;
       } catch (error) {

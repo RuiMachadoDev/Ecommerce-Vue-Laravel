@@ -20,23 +20,29 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        \Log::info('Requisição recebida para criar categoria:', $request->all());
-    
+        // Regista os dados enviados
+        \Log::info('Dados recebidos para criar categoria:', $request->all());
+
+        // Tenta validar e captura qualquer erro
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
-                'slug' => 'required|string',
+                'slug' => 'required|string|unique:categories,slug',
             ]);
-    
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Erro de validação:', $e->errors());
+            return response()->json(['errors' => $e->errors()], 422);
+        }
+
+        // Tenta criar a categoria
+        try {
             $category = Category::create($validated);
-            \Log::info('Categoria criada com sucesso:', $category->toArray());
-    
-            return $category;
+            return response()->json($category, 201);
         } catch (\Exception $e) {
-            \Log::error('Erro ao criar categoria:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            \Log::error('Erro ao criar categoria:', ['message' => $e->getMessage()]);
             return response()->json(['error' => 'Erro interno ao criar categoria'], 500);
         }
-    }    
+    }
 
     public function update(Request $request, Category $category)
     {
