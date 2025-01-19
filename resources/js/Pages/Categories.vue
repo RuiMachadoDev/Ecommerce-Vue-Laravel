@@ -9,13 +9,13 @@
       Adicionar Nova Categoria
     </button>
 
-    <ul class="space-y-4">
+    <ul v-if="categories && categories.length" class="space-y-4">
       <li
         v-for="category in categories"
-        :key="category.id"
+        :key="category?.id"
         class="flex justify-between items-center bg-gray-100 p-4 rounded-lg shadow-sm"
       >
-        <span class="text-lg font-medium">{{ category.name }}</span>
+        <span class="text-lg font-medium">{{ category?.name || 'Sem Nome' }}</span>
         <div class="space-x-2">
           <button
             @click="editCategory(category)"
@@ -24,7 +24,7 @@
             Editar
           </button>
           <button
-            @click="deleteCategory(category.id)"
+            @click="deleteCategory(category?.id)"
             class="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-500 transition"
           >
             Excluir
@@ -32,6 +32,7 @@
         </div>
       </li>
     </ul>
+    <p v-else class="text-center text-gray-600">Nenhuma categoria disponível.</p>
 
     <!-- Formulário para criar/editar categorias -->
     <div v-if="formVisible" class="mt-6 bg-gray-50 p-4 rounded-lg shadow">
