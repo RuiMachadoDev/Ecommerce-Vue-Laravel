@@ -7,92 +7,42 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function __construct()
+    public function index(Request $request)
     {
-        // Aplica o middleware para verificar se o utilizador está autenticado
-        $this->middleware('auth');
+        if ($request->wantsJson()) {
+            return response()->json(Category::paginate(10));
+        }
 
-        // Permissões específicas para métodos
-        $this->middleware('can:manage categories')->only(['store', 'update', 'destroy']);
+        return Inertia::render('Categories', [
+            'categories' => Category::paginate(10),
+        ]);
     }
-
-    /**
-     * Lista todas as categorias.
-     */
-    
-     public function index()
-     {
-         // Retorna todas as categorias
-         return response()->json(Category::all());
-     }
-
-    /**
-     * Cria uma nova categoria.
-     */
 
     public function store(Request $request)
     {
-        try {
-            \Log::info('Store Method Triggered', [
-                'authenticated' => auth()->check(),
-                'user' => auth()->user(),
-                'roles' => auth()->user() ? auth()->user()->getRoleNames() : null,
-            ]);
-
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-            ]);
-
-            $category = Category::create($validated);
-
-            return response()->json($category, 201);
-        } catch (\Throwable $e) {
-            \Log::error('Error in Category Store', [
-                'error_message' => $e->getMessage(),
-                'stack_trace' => $e->getTraceAsString(),
-            ]);
-
-            return response()->json(['message' => 'Internal Server Error'], 500);
-        }
-    }
-
-    /**
-     * Atualiza uma categoria existente.
-     */
-    public function update(Request $request, Category $category)
-    {
-        // Verifica autenticação
-        if (!auth()->check()) {
-            \Log::info('Ação não permitida: usuário não autenticado ao tentar atualizar categoria.');
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories,slug,' . $category->id,
+            'slug' => 'required|string|unique:categories,slug',
+        ]);
+
+        return Category::create($validated);
+    }
+
+    public function update(Request $request, Category $category)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|unique:categories,slug,' . $category->id,
         ]);
 
         $category->update($validated);
 
-        \Log::info('Categoria atualizada com sucesso:', ['category' => $category]);
-
-        return response()->json($category);
+        return $category;
     }
 
-    /**
-     * Exclui uma categoria.
-     */
     public function destroy(Category $category)
     {
-        // Verifica autenticação
-        if (!auth()->check()) {
-            \Log::info('Ação não permitida: usuário não autenticado ao tentar excluir categoria.');
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
         $category->delete();
-
-        \Log::info('Categoria excluída com sucesso:', ['category_id' => $category->id]);
 
         return response()->noContent();
     }
