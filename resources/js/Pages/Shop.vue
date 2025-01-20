@@ -3,13 +3,17 @@
     <!-- Navbar -->
     <nav class="bg-gray-800 text-white shadow-md py-4 px-8 flex justify-between items-center">
       <h1 class="text-lg font-bold">Loja Virtual</h1>
-      <a href="/" class="hover:underline">Início</a>
+      <div class="flex items-center space-x-6">
+        <a href="/" class="hover:underline">Início</a>
+        <a href="/cart" class="hover:underline">Carrinho</a>
+      </div>
     </nav>
 
     <!-- Produtos -->
     <div class="container mx-auto p-6">
-      <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Explore Nossos Produtos</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Explore os nossos Produtos</h2>
+
+      <div v-if="products.data.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <div
           v-for="product in products.data"
           :key="product.id"
@@ -45,8 +49,13 @@
         </div>
       </div>
 
+      <!-- Mensagem quando não há produtos -->
+      <div v-else class="text-center text-gray-600">
+        <p class="text-lg">Nenhum produto disponível.</p>
+      </div>
+
       <!-- Paginação -->
-      <div class="mt-10 flex justify-center items-center space-x-4">
+      <div v-if="products.prev_page_url || products.next_page_url" class="mt-10 flex justify-center items-center space-x-4">
         <button
           v-if="products.prev_page_url"
           @click="goToPage(products.prev_page_url)"
@@ -92,7 +101,7 @@ export default {
     const addToCart = (product) => {
       if (!auth.user) {
         const proceed = confirm(
-          "Você precisa estar autenticado para adicionar produtos ao carrinho. Deseja fazer login ou se registrar?"
+          "Precisa de estar autenticado para adicionar produtos ao carrinho. Deseja fazer login ou registar-se?"
         );
         if (proceed) {
           router.visit("/login");
@@ -114,7 +123,7 @@ export default {
         )
         .then(() => {
           alert("Produto adicionado ao carrinho com sucesso!");
-          router.visit("/cart"); // Redireciona para o carrinho após adicionar
+          router.visit("/cart");
         })
         .catch((error) => {
           console.error("Erro ao adicionar ao carrinho:", error);
