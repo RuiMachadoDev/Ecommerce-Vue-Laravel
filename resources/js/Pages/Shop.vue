@@ -99,60 +99,43 @@ export default {
       required: true,
     },
   },
-  setup() {
-    const { props } = usePage();
-    const auth = props.auth;
-
-    // Mock cart count (substitua por lógica real quando o carrinho estiver funcional)
-    const cartCount = 3;
-
-    const goToPage = (url) => {
-      router.visit(url);
+  data() {
+    return {
+      cartCount: 0, // Contador inicial
     };
-
-    const viewDetails = (id) => {
-      router.visit(`/products/${id}`);
-    };
-
-    const addToCart = (product) => {
-      if (!auth.user) {
-        const proceed = confirm(
-          "Precisa de estar autenticado para adicionar produtos ao carrinho. Deseja fazer login ou registar-se?"
-        );
-        if (proceed) {
-          router.visit("/login");
-        }
-        return;
-      }
-
+  },
+  mounted() {
+    this.fetchCartCount();
+  },
+  methods: {
+    fetchCartCount() {
       axios
-        .post(
-          "/cart/add",
-          { product_id: product.id, quantity: 1 },
-          {
-            headers: {
-              "X-CSRF-TOKEN": document
-                .querySelector('meta[name="csrf-token"]')
-                .getAttribute("content"),
-            },
-          }
-        )
+        .get("/cart/count")
+        .then((response) => {
+          this.cartCount = response.data.count;
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar contador do carrinho:", error);
+        });
+    },
+    goToPage(url) {
+      router.visit(url);
+    },
+    viewDetails(id) {
+      router.visit(`/products/${id}`);
+    },
+    addToCart(product) {
+      axios
+        .post("/cart/add", { product_id: product.id, quantity: 1 })
         .then(() => {
+          this.fetchCartCount(); // Atualiza o contador do carrinho
           alert("Produto adicionado ao carrinho com sucesso!");
-          router.visit("/cart");
         })
         .catch((error) => {
           console.error("Erro ao adicionar ao carrinho:", error);
           alert("Erro ao adicionar ao carrinho. Tente novamente.");
         });
-    };
-
-    return {
-      goToPage,
-      viewDetails,
-      addToCart,
-      cartCount,
-    };
+    },
   },
 };
 </script>
