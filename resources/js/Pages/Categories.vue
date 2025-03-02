@@ -12,21 +12,19 @@
     <ul v-if="categories.length > 0" class="space-y-4">
       <li
         v-for="category in categories"
-        :key="category?.id || Math.random()" <!-- Adicione fallback ao `key` -->
+        :key="category.id || `fallback-${Math.random().toString(36).substr(2, 9)}`"
         class="flex justify-between items-center bg-gray-100 p-4 rounded-lg shadow-sm"
       >
-        <span class="text-lg font-medium">{{ category?.name || 'Categoria Inválida' }}</span>
+        <span class="text-lg font-medium">{{ category.name }}</span>
         <div class="space-x-2">
           <button
-            v-if="category"
             @click="editCategory(category)"
             class="bg-gray-800 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition"
           >
             Editar
           </button>
           <button
-            v-if="category"
-            @click="deleteCategory(category?.id)"
+            @click="deleteCategory(category.id)"
             class="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-500 transition"
           >
             Excluir
@@ -34,6 +32,7 @@
         </div>
       </li>
     </ul>
+
     <p v-else class="text-center text-gray-600">Nenhuma categoria disponível.</p>
 
     <!-- Formulário para criar/editar categorias -->
